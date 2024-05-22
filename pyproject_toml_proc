@@ -1,0 +1,18 @@
+import tomllib
+import json
+
+
+def process_dict(dct, new_dict={}, find_keys=("name", "authors", "version")):
+    for key, val in dct.items():
+        if key in find_keys:
+            new_dict.update({key: val})
+        else:
+            if type(val) is dict:
+                process_dict(val, new_dict, find_keys)
+    return new_dict
+
+
+with open("pyproject.toml", "rb") as f, open("result.json", "w") as f_out:
+    data = tomllib.load(f)
+    res = process_dict(data)
+    f_out.write(json.dumps(res, indent=4))
